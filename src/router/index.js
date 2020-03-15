@@ -1,22 +1,61 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/home'
+// 用按需加载的方式配置路由表
+// 导入二级路由组件
+const Home = () => import('@/views/home') // 首页
+const Question = () => import('@/views/question') // 问答
+const Video = () => import('@/views/video') // 视频
+const User = () => import('@/views/user') // 个人中心
+
+// 导入一级路由组件
+const Layout = () => import('@/views/layout') // 布局组件
+const Chat = () => import('@/views/user/chat') // 小智同学组件
+const Profile = () => import('@/views/user/profile') // 编辑个人资料组件
+const Login = () => import('@/views/login') // 登陆组件
+const Search = () => import('@/views/search') // 搜索模块
+const SearchResult = () => import('@/views/search/search-result') // 搜索结构模块
+const Article = () => import('@/views/article') // 文章详情模块
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: Home
+      }, {
+        path: '/question',
+        component: Question
+      }, {
+        path: '/video',
+        component: Video
+      }, {
+        path: '/user',
+        component: User
+      }
+    ]
   },
   {
     path: '/login',
-    name: 'Login',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/login')
+    component: Login
+  }, {
+    path: '/user/chat',
+    component: Chat
+  }, {
+    path: '/user/profile',
+    component: Profile
+  }, {
+    path: '/search',
+    component: Search
+  }, {
+    path: '/search/result',
+    component: SearchResult
+  }, {
+    path: '/article',
+    component: Article
   }
 ]
 
