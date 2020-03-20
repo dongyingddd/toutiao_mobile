@@ -3,7 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vant from 'vant'
-import 'vant/lib/index.css'
+// import 'vant/lib/index.css'
+import 'vant/lib/index.less'
 import 'amfe-flexible' // 修改rem基准值的js插件
 import '@/styles/index.less' // 引入全局自定义样式 覆盖vant的样式
 import '@/permission' // 引入导航守卫
