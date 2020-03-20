@@ -28,8 +28,8 @@ instance.interceptors.request.use(function (config) {
     // 将token统一注入到headers中
     config.headers.Authorization = `Bearer ${store.state.user.token}`
     // 返回配置
-    return config
   }
+  return config
 }, function (error) {
   // 直接返回Promise的错误
   return Promise.reject(error) // 返回错误 这样的话会直接进入到axios的catch中
@@ -100,6 +100,7 @@ instance.interceptors.response.use(function (response) {
       router.push(path)
     }
   }
+  debugger
   // 直接返回失败
   return Promise.reject(error) // 返回执行链的catch
 })

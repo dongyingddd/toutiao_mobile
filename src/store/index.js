@@ -11,7 +11,7 @@ export default new Vuex.Store({
   // 要修改token,只能通过mutations
   mutations: {
     // 修改token
-    updataUser (state, payload) {
+    updateUser (state, payload) {
       state.user = payload.user // 定义载荷中的user数据给sate
       // 更新vuex的时候,也应该将最新的数据 存入本地缓存
       auth.setUser(payload.user) // 相当于保持vuex和本地存储的同步

@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { login } from '@/api/user'
+import { mapMutations } from 'vuex'
 export default {
   data () {
     return {
@@ -73,14 +75,28 @@ export default {
       this.errorMessage.code = ''
       return true
     },
+    // 可以导入需要的方法, 直接把updateUser方法映射到当前的methods中
+    ...mapMutations(['updateUser']),
     // 登录校验
-    login () {
+    async login () {
       // 校验手机号和验证码
-      const validateMobile = this.checkMobile
-      const vilidateCode = this.checkCode
+
+      const validateMobile = this.checkMobile()
+      const vilidateCode = this.checkCode()
       if (validateMobile && vilidateCode) {
         // 如果两个检查都是true,就表示通过了校验
-        console.log('校验通过')
+        // console.log('校验通过')
+        try {
+          const result = await login(this.loginForm)
+          // 更新当前的token和refresh_token
+          this.updateUser({ user: result })
+          // 判断是否有需要跳转的页面,如果有就跳转,如果没有,就跳到主页
+          const { redirectUrl } = this.$route.query
+          this.$router.push(redirectUrl || '/') // 短路表达式
+        } catch (error) {
+          // 提示消息 提示用户,告诉用户 登陆失败
+          this.$notify({ message: '用户名或者验证码错误', duration: 800 })
+        }
       }
     }
   }
