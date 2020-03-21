@@ -4,6 +4,10 @@
  *
  *
  ****/
+import dayjs from 'dayjs'
+import 'dayjs/locale/zh-cn'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime)
 // 导出一个默认对象
 export default {
   // 该方法会在Vue.use时调用
@@ -17,6 +21,9 @@ export default {
       })
     // 给Vue的原型属性赋值一个函数 自定义一个函数名 所有组件都有了这个属性
     Vue.prototype.$sleep = sleep
+
+    // 注册过滤器
+    Vue.filter('relTime', relTime)
   }
 }
 // 休眠函数
@@ -29,4 +36,9 @@ function sleep (time = 500) {
       resolve()
     }, time)
   })
+}
+
+// 封装一个相对时间函数
+function relTime (date) {
+  return dayjs().locale('zh-cn').from(date)
 }
