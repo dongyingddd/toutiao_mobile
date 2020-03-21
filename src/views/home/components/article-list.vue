@@ -4,13 +4,42 @@
   <!-- 这里放置这个div的目的时 形成滚动条 因为我们后期要做阅读记忆 -->
   <!-- 阅读记忆: 上次你阅读到哪 回来之后还是哪 -->
   <div class="scroll-wrapper">
-      <!-- 文章列表 -->
-      <!-- van-list组件 如果不加干涉,初始化完毕后,就会检测自己距离底部的长度,如果超过了限定,就会执行load事件 自动把绑定的loadind变为true -->
+    <!-- 文章列表 -->
+    <!-- van-list组件 如果不加干涉,初始化完毕后,就会检测自己距离底部的长度,如果超过了限定,就会执行load事件 自动把绑定的loadind变为true -->
     <van-pull-refresh v-model="downLoading" @refresh="onRefresh" :success-text="successText">
-          <van-list v-model="upLoading" :finished="finished" @load="onload" finished-text="没有了">
-          <van-cell-group>
-              <van-cell title="美股又熔断了" :value="`天台排队${item}`" v-for="item in articles" :key="item"></van-cell>
-          </van-cell-group>
+      <van-list v-model="upLoading" :finished="finished" @load="onload" finished-text="没有了">
+        <!-- 三张图 -->
+        <div class="article_item">
+          <h3 class="van-ellipsis">PullRefresh下拉刷新PullRefresh下拉刷新下拉刷新下拉刷新</h3>
+          <div class="img_box">
+            <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+            <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+            <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+          </div>
+          <div class="info_box">
+            <span>你像一阵风</span>
+            <span>8评论</span>
+            <span>10分钟前</span>
+            <span class="close">
+              <van-icon name="cross"></van-icon>
+            </span>
+          </div>
+        </div>
+        <!-- 一张图 -->
+        <div class="article_item">
+          <h3 class="van-ellipsis">PullRefresh下拉刷新PullRefresh下拉刷新下拉刷新下拉刷新</h3>
+          <div class="img_box">
+            <van-image class="w100" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+          </div>
+          <div class="info_box">
+            <span>你像一阵风</span>
+            <span>8评论</span>
+            <span>10分钟前</span>
+            <span class="close">
+              <van-icon name="cross"></van-icon>
+            </span>
+          </div>
+        </div>
       </van-list>
     </van-pull-refresh>
   </div>
@@ -24,7 +53,7 @@ export default {
       finished: false, // 表示是否已经完成所有数据的加载
       articles: [], // 定义一个数组
       downLoading: false, // 下拉刷新状态 表示是否正在下拉刷新
-      successText: ''// 刷新成功的文本
+      successText: '' // 刷新成功的文本
     }
   },
   methods: {
@@ -36,7 +65,10 @@ export default {
         this.finished = true // 关闭加载
       } else {
         // Array.from()方法就是将一个类数据对象或者可遍历对象转换成一个真正的数组
-        const arr = Array.from(Array(15), (value, index) => this.articles.length + index + 1)
+        const arr = Array.from(
+          Array(15),
+          (value, index) => this.articles.length + index + 1
+        )
         // 上拉数据 不是覆盖之前的数据 应该把数据追加到数组的尾部
         this.articles.push(...arr)
         // 添加完数据 需要手动关掉loading
@@ -52,7 +84,10 @@ export default {
     onRefresh () {
       setTimeout(() => {
         // 模拟下拉刷新数据
-        const arr = Array.from(Array(2), (value, index) => '追加新数据' + (index + 1))
+        const arr = Array.from(
+          Array(2),
+          (value, index) => '追加新数据' + (index + 1)
+        )
         // 数据添加到头部
         this.articles.unshift(...arr)
         // 手动关闭正在加载的状态
@@ -64,6 +99,45 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="less" scoped>
+.article_item {
+  h3 {
+    font-weight: normal;
+    line-height: 2;
+  }
+  .img_box {
+    display: flex;
+    justify-content: space-between;
+    .w33 {
+      width: 33%;
+      height: 90px;
+    }
+    .w100 {
+      width: 100%;
+      height: 180px;
+    }
+  }
+  .info_box {
+    color: #999;
+    line-height: 2;
+    position: relative;
+    font-size: 12px;
+    span {
+      padding-right: 10px;
+      &.close {
+        border: 1px solid #ddd;
+        border-radius: 2px;
+        line-height: 15px;
+        height: 12px;
+        width: 16px;
+        text-align: center;
+        padding-right: 0;
+        font-size: 8px;
+        position: absolute;
+        right: 0;
+        top: 7px;
+      }
+    }
+  }
+}
 </style>
