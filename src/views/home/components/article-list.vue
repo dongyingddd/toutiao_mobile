@@ -8,7 +8,7 @@
     <!-- van-list组件 如果不加干涉,初始化完毕后,就会检测自己距离底部的长度,如果超过了限定,就会执行load事件 自动把绑定的loading变为true -->
     <van-pull-refresh v-model="downLoading" @refresh="onRefresh" :success-text="successText">
       <van-list v-model="upLoading" :finished="finished" @load="onload" finished-text="没有了">
-        <van-cell v-for="item in articles" :key="item.aut_id">
+        <van-cell v-for="item in articles" :key="item.art_id.toString()">
           <!-- 一张图 -->
           <div class="article_item">
             <h3 class="van-ellipsis">111{{item.title}}</h3>
@@ -91,19 +91,40 @@ export default {
     },
 
     // 下拉刷新
-    onRefresh () {
-      setTimeout(() => {
-        // 模拟下拉刷新数据
-        const arr = Array.from(
-          Array(2),
-          (value, index) => '追加新数据' + (index + 1)
-        )
-        // 数据添加到头部
-        this.articles.unshift(...arr)
-        // 手动关闭正在加载的状态
-        this.downLoading = false
-        this.successText = `更新了${arr.length}条数据`
-      }, 1000)
+    async onRefresh () {
+      // setTimeout(() => {
+      //   // 模拟下拉刷新数据
+      //   const arr = Array.from(
+      //     Array(2),
+      //     (value, index) => '追加新数据' + (index + 1)
+      //   )
+      //   // 数据添加到头部
+      //   this.articles.unshift(...arr)
+      //   // 手动关闭正在加载的状态
+      //   this.downLoading = false
+      //   this.successText = `更新了${arr.length}条数据`
+      // }, 1000)
+      const data = await getArticles({
+        channel_id: this.channel_id,
+        timestamp: Date.now()
+      })
+
+      // 手动关闭下拉刷新的状态
+      this.downLoading = false
+      // 判断最新的时间戳能否换来数据 ,如果能:把新数据整个替换旧数据 如果不能:就告诉大家暂时没有更新
+      if (data.results.length) {
+        // 替换历史数据
+        this.articles = data.results
+        // 此时 之前的全部数据已经被覆盖了 假如你之前把数据拉到了底端 也就意味着你之前的finished已经为true了
+        if (data.pre_timestamp) {
+          this.finished = false // 重新唤醒列表 让列表可以上拉加载
+          this.timestamp = data.pre_timestamp // 记录历史时间戳给变量
+        }
+        this.successText = `更新了${data.results.length}条数据`
+      } else {
+        // 如果换不来新数据
+        this.successText = '当前已经是最新的了'
+      }
     }
   }
 }
