@@ -2,7 +2,7 @@
   <div class="container">
     <!-- 放置标签页组件 -->
     <van-tabs>
-      <van-tab :title="`标签${item}`" v-for="item in 10" :key="item">
+      <van-tab :title="item.name" v-for="item in channels" :key="item.id">
         <!-- 生成若干个单元格 -->
         <ArticleList></ArticleList>
       </van-tab>
@@ -16,10 +16,25 @@
 
 <script>
 import ArticleList from './components/article-list'
+import { getMyChannels } from '@/api/channels'
 export default {
   name: 'Home',
   components: {
     ArticleList // 注册组件
+  },
+  data () {
+    return {
+      channels: [] // 接收频道数据
+    }
+  },
+  methods: {
+    async getMyChannels () {
+      const data = await getMyChannels()
+      this.channels = data.channels // 更新原来的数据
+    }
+  },
+  created () {
+    this.getMyChannels()
   }
 }
 </script>
