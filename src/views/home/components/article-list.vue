@@ -5,79 +5,89 @@
   <!-- 阅读记忆: 上次你阅读到哪 回来之后还是哪 -->
   <div class="scroll-wrapper">
     <!-- 文章列表 -->
-    <!-- van-list组件 如果不加干涉,初始化完毕后,就会检测自己距离底部的长度,如果超过了限定,就会执行load事件 自动把绑定的loadind变为true -->
+    <!-- van-list组件 如果不加干涉,初始化完毕后,就会检测自己距离底部的长度,如果超过了限定,就会执行load事件 自动把绑定的loading变为true -->
     <van-pull-refresh v-model="downLoading" @refresh="onRefresh" :success-text="successText">
       <van-list v-model="upLoading" :finished="finished" @load="onload" finished-text="没有了">
-        <!-- 三张图 -->
-        <div class="article_item">
-          <h3 class="van-ellipsis">PullRefresh下拉刷新PullRefresh下拉刷新下拉刷新下拉刷新</h3>
-          <div class="img_box">
-            <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-            <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-            <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+        <van-cell v-for="item in articles" :key="item.aut_id">
+          <!-- 一张图 -->
+          <div class="article_item">
+            <h3 class="van-ellipsis">111{{item.title}}</h3>
+            <div class="img_box" v-if="item.cover.type === 3">
+                <van-image class="w33" fit="cover" :src="item.cover.images[0]"/>
+                <van-image class="w33" fit="cover" :src="item.cover.images[1]"/>
+                <van-image class="w33" fit="cover" :src="item.cover.images[2]"/>
+            </div>
+            <div class="img_box" v-if="item.cover.type === 1 ">
+              <van-image class="w100" fit="cover" :src="item.cover.images[0]" />
+            </div>
+            <div class="info_box">
+              <span>{{item.aut_name}}</span>
+              <span>{{item.comm_count}}评论</span>
+              <span>{{item.pubdate}}</span>
+              <span class="close">
+                <van-icon name="cross"></van-icon>
+              </span>
+            </div>
           </div>
-          <div class="info_box">
-            <span>你像一阵风</span>
-            <span>8评论</span>
-            <span>10分钟前</span>
-            <span class="close">
-              <van-icon name="cross"></van-icon>
-            </span>
-          </div>
-        </div>
-        <!-- 一张图 -->
-        <div class="article_item">
-          <h3 class="van-ellipsis">PullRefresh下拉刷新PullRefresh下拉刷新下拉刷新下拉刷新</h3>
-          <div class="img_box">
-            <van-image class="w100" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-          </div>
-          <div class="info_box">
-            <span>你像一阵风</span>
-            <span>8评论</span>
-            <span>10分钟前</span>
-            <span class="close">
-              <van-icon name="cross"></van-icon>
-            </span>
-          </div>
-        </div>
+        </van-cell>
       </van-list>
     </van-pull-refresh>
   </div>
 </template>
 
 <script>
+import { getArticles } from '@/api/articles'
 export default {
+  props: {
+    channel_id: {
+      required: true,
+      type: Number,
+      default: null
+    }
+  },
   data () {
     return {
       upLoading: false, // 表示是否开启了上拉加载
       finished: false, // 表示是否已经完成所有数据的加载
       articles: [], // 定义一个数组
       downLoading: false, // 下拉刷新状态 表示是否正在下拉刷新
-      successText: '' // 刷新成功的文本
+      successText: '', // 刷新成功的文本
+      timestamp: null // 存放时间戳
     }
   },
   methods: {
     // 上拉加载
-    onload () {
+    async onload () {
       console.log('开始加载数据')
+      // debugger
       // 如果你有数据,应该把数据加到list中
-      if (this.articles.length > 50) {
-        this.finished = true // 关闭加载
+      const data = await getArticles({
+        channel_id: this.channel_id,
+        timestamp: this.timestamp || Date.now()
+      })
+      //   console.log('data', data)
+
+      // Array.from()方法就是将一个类数据对象或者可遍历对象转换成一个真正的数组
+      // const arr = Array.from(
+      //   Array(15),
+      //   (value, index) => this.articles.length + index + 1
+      // )
+      // 上拉数据 不是覆盖之前的数据 应该把数据追加到数组的尾部
+      this.articles.push(...data.results)
+      // 添加完数据 需要手动关掉loading
+      this.upLoading = false
+      console.log(this.articles)
+
+      // 将历史时间戳给 timestamp 但是赋值之前有个判断 需要判断历史时间戳是否为0
+      // 如果历史时间戳为0 ,说明此时已经没有数据了,应该宣布结束
+      // debugger
+      if (data.pre_timestamp) {
+        // 如果有历史时间戳 表示还有数据 可以继续加载
+        this.timestamp = data.pre_timestamp
       } else {
-        // Array.from()方法就是将一个类数据对象或者可遍历对象转换成一个真正的数组
-        const arr = Array.from(
-          Array(15),
-          (value, index) => this.articles.length + index + 1
-        )
-        // 上拉数据 不是覆盖之前的数据 应该把数据追加到数组的尾部
-        this.articles.push(...arr)
-        // 添加完数据 需要手动关掉loading
-        this.upLoading = false
+        // 如果没有历史时间戳 表示没有数据加可以请求了
+        this.finished = true
       }
-      // 如果你想关掉
-      //   setTimeout(() => {
-      //     this.finished = true // 表示数据已经加载完毕了 没有数据了
-      //   }, 1000)
     },
 
     // 下拉刷新

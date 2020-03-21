@@ -4,7 +4,8 @@
     <van-tabs>
       <van-tab :title="item.name" v-for="item in channels" :key="item.id">
         <!-- 生成若干个单元格 -->
-        <ArticleList></ArticleList>
+        <!-- 父传子 将频道id通过属性传值传递给子组件article-list -->
+        <ArticleList :channel_id="item.id"></ArticleList>
       </van-tab>
     </van-tabs>
     <!-- 在tabs下放置图标 编辑频道的图标 -->
