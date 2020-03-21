@@ -14,3 +14,15 @@ export function getArticles (params) {
     params: { with_top: 1, ...params } // 合并数据
   })
 }
+
+/**
+ *
+ * 对文章不感兴趣
+ */
+export function dislikeArticle (data) {
+  return request({
+    url: '/article/dislikes',
+    method: 'post',
+    data
+  })
+}

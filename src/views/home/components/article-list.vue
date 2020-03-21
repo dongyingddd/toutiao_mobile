@@ -11,7 +11,7 @@
         <van-cell v-for="item in articles" :key="item.art_id.toString()">
           <!-- 一张图 -->
           <div class="article_item">
-            <h3 class="van-ellipsis">111{{item.title}}</h3>
+            <h3 class="van-ellipsis">{{item.title}}</h3>
             <div class="img_box" v-if="item.cover.type === 3">
                 <van-image lazy-load class="w33" fit="cover" :src="item.cover.images[0]"/>
                 <van-image lazy-load class="w33" fit="cover" :src="item.cover.images[1]"/>
@@ -24,7 +24,7 @@
               <span>{{item.aut_name}}</span>
               <span>{{item.comm_count}}评论</span>
               <span>{{item.pubdate | relTime}}</span>
-              <span class="close">
+              <span class="close" v-if="user.token" @click="$emit('showAction',item.art_id.toString())">
                 <van-icon name="cross"></van-icon>
               </span>
             </div>
@@ -37,6 +37,8 @@
 
 <script>
 import { getArticles } from '@/api/articles'
+import { mapState } from 'vuex'
+import eventbus from '@/utils/eventbus'
 export default {
   props: {
     channel_id: {
@@ -128,6 +130,29 @@ export default {
         this.successText = '当前已经是最新的了'
       }
     }
+  },
+  computed: {
+    ...mapState(['user'])
+  },
+  // 初始化函数
+  created () {
+    // 监听删除文章事件
+    // 相当于 有多少实例 就有多少监听
+    eventbus.$on('delArticle', (artId, channelId) => {
+      // 这个位置 每个组件实例都会Id触发to
+      // 要判断一下 传递过来的频道 是否等于自身的频道
+      if (channelId === this.channel_id) {
+        // 通过id查询对应文章数据所在的下标
+        const index = this.articles.findIndex(item => item.art_id.toString() === artId)
+        if (index > -1) {
+          this.articles.splice(index, 1) // 删除对应下标的数据
+        }
+        // 如果你一直删除,就会将列表数据都删光,就不会触发load事件了
+        if (this.articles.length === 0) {
+          this.onload()
+        }
+      }
+    })
   }
 }
 </script>
