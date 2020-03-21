@@ -100,7 +100,6 @@ instance.interceptors.response.use(function (response) {
       router.push(path)
     }
   }
-  debugger
   // 直接返回失败
   return Promise.reject(error) // 返回执行链的catch
 })
