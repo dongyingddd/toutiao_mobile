@@ -59,7 +59,8 @@ export default {
     // 上拉加载
     async onload () {
       console.log('开始加载数据')
-      // debugger
+      // 使用休眠函数 让请求延迟 防止用户加载太快 减轻服务器压力
+      await this.$sleep()
       // 如果你有数据,应该把数据加到list中
       const data = await getArticles({
         channel_id: this.channel_id,
@@ -104,6 +105,7 @@ export default {
       //   this.downLoading = false
       //   this.successText = `更新了${arr.length}条数据`
       // }, 1000)
+      await this.$sleep()
       const data = await getArticles({
         channel_id: this.channel_id,
         timestamp: Date.now()
