@@ -2,7 +2,7 @@
   <div class="container">
     <!-- 放置标签页组件 -->
     <van-tabs  v-model="activeIndex">
-      <van-tab :title="item.name" v-for="item in channels" :key="item.id">
+      <van-tab class="tab_box" :title="item.name" v-for="item in channels" :key="item.id">
         <!-- 生成若干个单元格 -->
         <!-- 父传子 将频道id通过属性传值传递给子组件article-list -->
         <ArticleList :channel_id="item.id" @showAction="openAction"></ArticleList>
@@ -18,7 +18,7 @@
     </van-popup>
     <!-- 放置编辑频道组件 外层是弹层面板 -->
     <van-action-sheet v-model="showChannelEdit" title="编辑频道" :round="false">
-      <ChannelEdit :channels="channels"/>
+      <ChannelEdit :channels="channels" @selectChannel="selectChannel"/>
     </van-action-sheet>
   </div>
 
@@ -48,9 +48,16 @@ export default {
     }
   },
   methods: {
+    // 点击我的频道,切换到对应的频道
+    selectChannel (id) {
+      const index = this.channels.findIndex(item => item.id === id) // 获取切换频道的索引
+      this.activeIndex = index // 将对应频道的索引设置给当前激活标签
+      this.showChannelEdit = false // 关闭弹层
+    },
+    // 获取我的频道数据
     async getMyChannels () {
       const data = await getMyChannels()
-      this.channels = data.channels // 更新原来的数据
+      this.channels = data.channels // 更新原来的数据  channels
     },
     openAction (artId) {
       // 此时应该弹出反馈的层

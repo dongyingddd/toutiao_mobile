@@ -9,8 +9,8 @@
       </div>
       <van-grid class="van-hairline--left">
         <!-- 循环渲染我的频道 -->
-        <van-grid-item v-for="(item,index) in channels" :key="item.id">
-          <span class="f12">{{item.name}}</span>
+        <van-grid-item v-for="(channel,index) in channels" :key="channel.id">
+          <span class="f12" @click="$emit('selectChannel',channel.id)">{{channel.name}}</span>
           <!-- 叉号的显示问题: 因该在进入编辑状态时显示,退出编辑状态时不显示 -->
           <!-- 因为第一个 永远不显示叉号,所以应该加一个 index !== 0 -->
           <van-icon class="btn" name="cross" v-if="index!== 0 &&editing"></van-icon>
