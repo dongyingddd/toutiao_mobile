@@ -8,9 +8,12 @@
         <van-button v-else @click="editing=false" size="mini" type="danger" plain>完成</van-button>
       </div>
       <van-grid class="van-hairline--left">
-        <van-grid-item v-for="index in 8" :key="index">
-          <span class="f12">频道{{index}}</span>
-          <van-icon class="btn" name="cross"></van-icon>
+        <!-- 循环渲染我的频道 -->
+        <van-grid-item v-for="(item,index) in channels" :key="item.id">
+          <span class="f12">{{item.name}}</span>
+          <!-- 叉号的显示问题: 因该在进入编辑状态时显示,退出编辑状态时不显示 -->
+          <!-- 因为第一个 永远不显示叉号,所以应该加一个 index !== 0 -->
+          <van-icon class="btn" name="cross" v-if="index!== 0 &&editing"></van-icon>
         </van-grid-item>
       </van-grid>
     </div>
@@ -28,6 +31,13 @@
 
 <script>
 export default {
+  props: {
+    channels: {
+      required: true,
+      type: Array,
+      default: () => []
+    }
+  },
   data () {
     return {
       editing: false
