@@ -23,6 +23,7 @@ const instance = axios.create({
 
 // token的注入 应该是在请求之前 也就是请求拦截器
 instance.interceptors.request.use(function (config) {
+  // debugger
   // 成功的时候
   if (store.state.user.token) {
     // 将token统一注入到headers中

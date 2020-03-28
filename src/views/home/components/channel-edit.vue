@@ -13,7 +13,7 @@
           <span class="f12" @click="$emit('selectChannel',channel.id)" :class="{red: index === activeIndex}">{{channel.name}}</span>
           <!-- 叉号的显示问题: 因该在进入编辑状态时显示,退出编辑状态时不显示 -->
           <!-- 因为第一个 永远不显示叉号,所以应该加一个 index !== 0 -->
-          <van-icon class="btn" name="cross" v-if="index!== 0 &&editing"></van-icon>
+          <van-icon class="btn" name="cross" v-if="index!== 0 &&editing" @click="$emit('delChannel',channel.id)"></van-icon>
         </van-grid-item>
       </van-grid>
     </div>

@@ -18,7 +18,7 @@
     </van-popup>
     <!-- 放置编辑频道组件 外层是弹层面板 -->
     <van-action-sheet v-model="showChannelEdit" title="编辑频道" :round="false">
-      <ChannelEdit :channels="channels" @selectChannel="selectChannel" :activeIndex="activeIndex"/>
+      <ChannelEdit :channels="channels" @selectChannel="selectChannel" :activeIndex="activeIndex" @delChannel="delChannel"/>
     </van-action-sheet>
   </div>
 
@@ -26,7 +26,7 @@
 
 <script>
 import ArticleList from './components/article-list'
-import { getMyChannels } from '@/api/channels'
+import { getMyChannels, delChannel } from '@/api/channels'
 import MoreAction from './components/more-action'
 import { dislikeArticle, reportArticle } from '@/api/articles'
 import eventbus from '@/utils/eventbus'
@@ -48,6 +48,22 @@ export default {
     }
   },
   methods: {
+    // 删除我的频道
+    async delChannel (id) {
+      try {
+        // 调用API ,此时只是删除了缓存中的数据
+        const result = await delChannel(id)
+        console.log(result)
+        // 如果此时成功的resolve了,我们应该去除对应的data中的数据
+        const index = this.channels.findIndex(item => item.id === id)
+        if (index <= this.activeIndex) {
+          this.activeIndex = this.activeIndex - 1
+        }
+        this.channels.splice(index, 1) // 删除对应的索引频道
+      } catch (error) {
+        this.$gnotify({ message: '删除频道失败' })
+      }
+    },
     // 点击我的频道,切换到对应的频道
     selectChannel (id) {
       const index = this.channels.findIndex(item => item.id === id) // 获取切换频道的索引
@@ -90,7 +106,6 @@ export default {
 
     // 举报文章
     async reportArticle (type) {
-      debugger
       try {
         const result = await reportArticle({
           target: this.articleId,
@@ -98,7 +113,7 @@ export default {
         })
         console.log(result)
         // 提示信息
-        this.gnotify({
+        this.$gnotify({
           type: 'success',
           message: '操作成功'
         })

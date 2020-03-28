@@ -45,7 +45,7 @@ export function delChannel (id) {
     const index = channels.findIndex(item => item.id === id)
     if (index > -1) {
       channels.splice(index, 1) // 删除对应的下标元素
-      localStorage.setItem(JSON.stringify(channels)) // 重新写入缓存
+      localStorage.setItem(key, JSON.stringify(channels)) // 重新写入缓存
       resolve() // 如果执行成功了,我们应该resolve
     } else {
       reject(new Error('没有找到对应的频道'))
