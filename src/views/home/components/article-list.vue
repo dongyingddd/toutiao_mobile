@@ -9,7 +9,6 @@
     <van-pull-refresh v-model="downLoading" @refresh="onRefresh" :success-text="successText">
       <van-list v-model="upLoading" :finished="finished" @load="onload" finished-text="没有了">
         <van-cell v-for="item in articles" :key="item.art_id.toString()">
-          <!-- 一张图 -->
           <div class="article_item">
             <h3 class="van-ellipsis">{{item.title}}</h3>
             <div class="img_box" v-if="item.cover.type === 3">
@@ -79,7 +78,7 @@ export default {
       this.articles.push(...data.results)
       // 添加完数据 需要手动关掉loading
       this.upLoading = false
-      console.log(this.articles)
+      // console.log(this.articles)
 
       // 将历史时间戳给 timestamp 但是赋值之前有个判断 需要判断历史时间戳是否为0
       // 如果历史时间戳为0 ,说明此时已经没有数据了,应该宣布结束

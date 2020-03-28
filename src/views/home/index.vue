@@ -14,7 +14,7 @@
     </span>
 
     <van-popup v-model="showMoreAction" :style="{width:'80%'}">
-      <MoreAction @dislike="dislikeArticle"/>
+      <MoreAction @dislike="dislikeArticle" @report="reportArticle" />
     </van-popup>
   </div>
 
@@ -24,7 +24,7 @@
 import ArticleList from './components/article-list'
 import { getMyChannels } from '@/api/channels'
 import MoreAction from './components/more-action'
-import { dislikeArticle } from '@/api/articles'
+import { dislikeArticle, reportArticle } from '@/api/articles'
 import eventbus from '@/utils/eventbus'
 export default {
   name: 'Home',
@@ -64,6 +64,31 @@ export default {
         // 应该触发一个事件 利用事件广播的机制 通知对应的tab来删除文章数据
         // 除了传文章id之外,你还需要告诉监听事件的人,现在处于哪个频道 可以传频道id
         // this.channels[this.activeIndex].id 当前激活的频道数据
+        eventbus.$emit('delArticle', this.articleId, this.channels[this.activeIndex].id)
+        // 关闭弹出层
+        this.showMoreAction = false
+      } catch (error) {
+        this.$gnotify({
+          message: '操作失败'
+        })
+      }
+    },
+
+    // 举报文章
+    async reportArticle (type) {
+      debugger
+      try {
+        const result = await reportArticle({
+          target: this.articleId,
+          type
+        })
+        console.log(result)
+        // 提示信息
+        this.gnotify({
+          type: 'success',
+          message: '操作成功'
+        })
+        // 通知对应的tab 删除文章数据
         eventbus.$emit('delArticle', this.articleId, this.channels[this.activeIndex].id)
         // 关闭弹出层
         this.showMoreAction = false
