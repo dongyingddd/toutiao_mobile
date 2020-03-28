@@ -59,7 +59,7 @@ export function delChannel (id) {
  * ***/
 export function addChannel (channel) {
   return new Promise(function (resolve, reject) {
-    const key = store.state.user.token
+    const key = store.state.user.token ? CACHE_CHANNEL_V : CACHE_CHANNEL_T
     const channels = JSON.parse(localStorage.getItem(key)) // 得到缓存中的数据 转化成数组
     channels.push(channel) // 将添加的频道数据追加到队尾
     localStorage.setItem(key, JSON.stringify(channels)) // 重新写入缓存

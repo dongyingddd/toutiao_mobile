@@ -18,7 +18,7 @@
     </van-popup>
     <!-- 放置编辑频道组件 外层是弹层面板 -->
     <van-action-sheet v-model="showChannelEdit" title="编辑频道" :round="false">
-      <ChannelEdit :channels="channels" @selectChannel="selectChannel" :activeIndex="activeIndex" @delChannel="delChannel"/>
+      <ChannelEdit :channels="channels" @selectChannel="selectChannel" :activeIndex="activeIndex" @delChannel="delChannel" @addChannel="addChannel"/>
     </van-action-sheet>
   </div>
 
@@ -26,7 +26,7 @@
 
 <script>
 import ArticleList from './components/article-list'
-import { getMyChannels, delChannel } from '@/api/channels'
+import { getMyChannels, delChannel, addChannel } from '@/api/channels'
 import MoreAction from './components/more-action'
 import { dislikeArticle, reportArticle } from '@/api/articles'
 import eventbus from '@/utils/eventbus'
@@ -48,6 +48,11 @@ export default {
     }
   },
   methods: {
+    // 添加到我的频道
+    async addChannel (channel) {
+      await addChannel(channel)
+      this.channels.push(channel)
+    },
     // 删除我的频道
     async delChannel (id) {
       try {
