@@ -52,3 +52,17 @@ export function delChannel (id) {
     }
   })
 }
+
+/******
+ * 添加频道的API
+ * channel : {id: 1,name: 'c++}
+ * ***/
+export function addChannel (channel) {
+  return new Promise(function (resolve, reject) {
+    const key = store.state.user.token
+    const channels = JSON.parse(localStorage.getItem(key)) // 得到缓存中的数据 转化成数组
+    channels.push(channel) // 将添加的频道数据追加到队尾
+    localStorage.setItem(key, JSON.stringify(channels)) // 重新写入缓存
+    resolve() // 执行这一步 相当于告诉我们使用Promise方法执行成功了
+  })
+}
