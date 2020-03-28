@@ -18,7 +18,7 @@
     </van-popup>
     <!-- 放置编辑频道组件 外层是弹层面板 -->
     <van-action-sheet v-model="showChannelEdit" title="编辑频道" :round="false">
-      <ChannelEdit :channels="channels" @selectChannel="selectChannel"/>
+      <ChannelEdit :channels="channels" @selectChannel="selectChannel" :activeIndex="activeIndex"/>
     </van-action-sheet>
   </div>
 
