@@ -5,8 +5,8 @@
     <!-- 导航 -->
     <van-search @search="onSearch" v-model.trim="q" placeholder="请输入搜索关键词" shape="round" />
     <van-cell-group class="suggest-box" v-if="q">
-      <van-cell icon="search">
-        <span>j</span>ava
+      <van-cell icon="search" @click="toSearchResult(text)" v-for="(text,index) in suggestList" :key="index">
+        <span>{{text}}</span>
       </van-cell>
     </van-cell-group>
     <div class="history-box" v-else-if="historyList.length">
@@ -25,13 +25,15 @@
 </template>
 
 <script>
+import { getSuggestion } from '@/api/articles'
 const key = 'hm-94-toutiao-history'
 export default {
   name: 'search',
   data () {
     return {
-      q: '',
-      historyList: [] // 作为一个数据变量,接收搜索记录
+      q: '', // 记录搜索关键字
+      historyList: [], // 作为一个数据变量,接收搜索记录
+      suggestList: [] // 联想搜索建议
     }
   },
   methods: {
@@ -75,6 +77,36 @@ export default {
   },
   created () {
     this.historyList = JSON.parse(localStorage.getItem('hm-94-toutiao-history') || '[]')
+  },
+  watch: {
+    q () {
+      // 一:  通过函数防抖进行联想搜索
+
+      // clearTimeout(this.timer) // 先清楚定时器
+      // this.timer = setTimeout(async () => {
+      //   // 需要判断 当清空的时候不能发请求
+      //   if (!this.q) {
+      //     this.suggestList = []
+      //   }
+      //   console.log(this.q)
+      //   const data = await getSuggestion({ q: this.q })
+      //   this.suggestList = data.options
+      // }, 300)
+
+      // 二: 通过函数节流进行联想搜索
+      if (!this.timer) {
+        // 要求300毫秒执行一次
+        this.timer = setTimeout(async () => {
+          this.timer = null // 先将标记置空
+          //  需要判断 当清空的时候 不能发送请求 但是要把联想建议清空
+          if (!this.q) {
+            this.suggestList = []
+          }
+          const data = await getSuggestion({ q: this.q })
+          this.suggestList = data.options
+        }, 300)
+      }
+    }
   }
 }
 </script>
