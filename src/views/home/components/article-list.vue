@@ -8,7 +8,7 @@
     <!-- van-list组件 如果不加干涉,初始化完毕后,就会检测自己距离底部的长度,如果超过了限定,就会执行load事件 自动把绑定的loading变为true -->
     <van-pull-refresh v-model="downLoading" @refresh="onRefresh" :success-text="successText">
       <van-list v-model="upLoading" :finished="finished" @load="onload" finished-text="没有了">
-        <van-cell v-for="item in articles" :key="item.art_id.toString()">
+        <van-cell :to="`/article?artId=${item.art_id.toString()}`" v-for="item in articles" :key="item.art_id.toString()">
           <div class="article_item">
             <h3 class="van-ellipsis">{{item.title}}</h3>
             <div class="img_box" v-if="item.cover.type === 3">
