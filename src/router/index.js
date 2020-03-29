@@ -13,7 +13,7 @@ const Chat = () => import('@/views/user/chat') // 小智同学组件
 const Profile = () => import('@/views/user/profile') // 编辑个人资料组件
 const Login = () => import('@/views/login') // 个人中心
 const Search = () => import('@/views/search') // 搜索模块
-const SearchResult = () => import('@/views/search/search-result') // 搜索结构模块
+const SearchResult = () => import('@/views/search/result') // 搜索结构模块
 const Article = () => import('@/views/article') // 文章详情模块
 
 Vue.use(VueRouter)
