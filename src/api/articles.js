@@ -78,3 +78,14 @@ export function getComment (params) {
     params
   })
 }
+
+/**
+ * 添加评论 或 添加评论回复
+ */
+export function commentOrReply (data) {
+  return request({
+    url: '/comments',
+    method: 'post',
+    data
+  })
+}
