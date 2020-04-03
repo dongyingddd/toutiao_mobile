@@ -56,10 +56,8 @@ export default {
     async follow () {
       console.log(this.article)
       try {
-        debugger
         if (this.article.is_followed) {
-        // 取消关注
-          debugger
+          // 取消关注
           await unfollowUser(this.article.aut_id) // 传入作者id
         } else {
           // 关注
