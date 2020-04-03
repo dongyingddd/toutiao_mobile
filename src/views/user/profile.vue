@@ -2,16 +2,17 @@
   <div class="container">
     <van-nav-bar left-arrow @click-left="$router.back()" title="编辑资料" right-text="保存" ></van-nav-bar>
     <van-cell-group>
-      <van-cell is-link title="头像"  center>
+      <van-cell is-link title="头像"  center @click="showPhoto=true">
         <van-image
           slot="default"
           width="1.5rem"
           height="1.5rem"
           fit="cover"
           round
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
+          :src="user.photo"
         />
       </van-cell>
+      <input ref="myFile" @change="upload()" type="file" style="display:none">
       <van-cell is-link title="名称" :value="user.name" @click="showName=true"/>
       <van-cell is-link title="性别" :value="user.gender === 0? '男': '女'" @click="showGender=true"/>
       <van-cell is-link title="生日" :value="user.birthday" @click="showDate"/>
@@ -19,7 +20,7 @@
 
     <!-- 头像弹层组件 -->
     <van-popup v-model="showPhoto" style="width:80%" :close-on-click-overlay="false">
-      <van-cell is-link title="本地相册选择图片"></van-cell>
+      <van-cell is-link title="本地相册选择图片" @click="openFileDialog"></van-cell>
       <van-cell is-link title="拍照"></van-cell>
     </van-popup>
 
@@ -48,7 +49,8 @@
 
 <script>
 import dayjs from 'dayjs'
-import { getUserProfile } from '@/api/user'
+import { getUserProfile, updatePhoto } from '@/api/user'
+
 export default {
   data () {
     return {
@@ -75,6 +77,19 @@ export default {
     }
   },
   methods: {
+    // 打开选择文件的对话框
+    openFileDialog () {
+      this.$refs.myFile.click() // 触发input:file的click事件 触发事件就会弹出文件对话框
+    },
+    // 修改头像
+    async upload (params) {
+      // 当选择完头像之后,就可以修改头像
+      const data = new FormData()
+      data.append('photo', this.$refs.myFile.files[0]) // 第二个参数是选择的图片文件
+      const result = await updatePhoto(data) // 上传头像
+      this.user.photo = result.photo // 把成功上传的图片地址设置给当前的data数据
+      this.showPhoto = false // 关闭弹层
+    },
     // 获取用户个人资料
     async getUserProfile () {
       this.user = await getUserProfile()
